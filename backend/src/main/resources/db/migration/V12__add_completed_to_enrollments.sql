@@ -1,0 +1,2 @@
+ALTER TABLE enrollments ADD COLUMN completed BOOLEAN NOT NULL DEFAULT FALSE;
+ALTER TABLE enrollments ADD COLUMN completed_at TIMESTAMP;

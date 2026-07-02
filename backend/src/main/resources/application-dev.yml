@@ -1,0 +1,37 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/eduflow_dev
+    username: postgres
+    password: ldrp@123
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: validate   # Flyway handles table migrations, Hibernate only validates
+    properties:
+      hibernate:
+        format_sql: false
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+jwt:
+  secret: dev-secret-key-min-256-bits-long-dev-secret-key-min-256-bits-long
+  expiration: 900000       # 15 minutes (in ms)
+  refresh-expiration: 604800000 # 7 days (in ms)
+
+logging:
+  level:
+    com.eduflow: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE
+
+google:
+  client-id: 210531315579-a62lqrmgs0a6ef90jctcblu3ri9iqh4s.apps.googleusercontent.com
+
+razorpay:
+  key-id: rzp_test_T1OO8QWCf0PCpw
+  key-secret: 6G5v52fM3jA51mcy6MkCXG9D
+
+

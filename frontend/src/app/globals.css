@@ -1,0 +1,106 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-sans: 'Udemy Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --color-purple: #a435f0;
+  --color-purple-dk: #7600c9;
+  --color-black: #1c1d1f;
+  --color-gray-dk: #3d3d3d;
+  --color-gray: #6a6f73;
+  --color-gray-lt: #d1d7dc;
+  --color-bg: #f7f9fa;
+  --color-yellow: #f4c150;
+  --color-green: #1e6055;
+  --color-red: #e03e2d;
+  --color-orange: #eb8a2f;
+  --color-blue: #5624d0;
+  --color-white: #ffffff;
+}
+
+body {
+  color: var(--color-black);
+  background-color: var(--color-white);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.4;
+  overflow-x: hidden;
+}
+
+/* Custom global animations for smooth UI feel */
+.fade-in-enter {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.fade-in-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1), transform 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Infinite scrolling marquee for trusted companies */
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 35s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* Slide up animation for support toast notifications */
+@keyframes slideUp {
+  0% { transform: translate(-50%, 24px); opacity: 0; }
+  100% { transform: translate(-50%, 0); opacity: 1; }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* === GLOBAL RESPONSIVE RESETS === */
+/* Prevent horizontal scroll on ALL screens */
+*, *::before, *::after { box-sizing: border-box; }
+body { overflow-x: hidden; margin: 0; }
+/* All images responsive by default */
+img { max-width: 100%; height: auto; display: block; }
+/* Skeleton pulse animation */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+.animate-pulse { animation: pulse 1.8s ease-in-out infinite; }
+/* iOS safe area — content above home bar */
+@supports (padding: env(safe-area-inset-bottom)) {
+  .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+}
+/* Responsive container */
+.container { width: 100%; max-width: 1280px; margin: 0 auto;
+padding-left: 1rem; padding-right: 1rem; }
+@media (min-width: 768px) { .container { padding-left: 2rem; padding-right: 2rem; } }
+@media (min-width: 1024px){ .container { padding-left: 3rem; padding-right: 3rem; } }
+
+/* Sleek custom scrollbar utility for panels like dropdowns */
+.sleek-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.sleek-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.sleek-scrollbar::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+.sleek-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #a435f0;
+}

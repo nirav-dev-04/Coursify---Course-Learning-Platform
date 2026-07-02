@@ -1,0 +1,25 @@
+server:
+  port: 5001
+
+spring:
+  profiles:
+    active: dev
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+cors:
+  allowed-origins: http://localhost:3000
+
+razorpay:
+  key-id: ${RAZORPAY_KEY_ID:test_key_id}
+  key-secret: ${RAZORPAY_KEY_SECRET:test_key_secret}
+
+aws:
+  s3:
+    bucket-name: ${AWS_S3_BUCKET:eduflow-bucket}
+    region: ${AWS_REGION:ap-south-1}
+  cloudfront:
+    domain: ${AWS_CLOUDFRONT_DOMAIN:d111111abcdef8.cloudfront.net}
+    private-key-path: ${AWS_CLOUDFRONT_PRIVATE_KEY_PATH:classpath:cloudfront-private-key.der}
+    key-pair-id: ${AWS_CLOUDFRONT_KEY_PAIR_ID:K2JC2123456789}

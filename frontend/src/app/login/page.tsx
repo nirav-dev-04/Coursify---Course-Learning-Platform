@@ -1,0 +1,162 @@
+'use client';
+
+import React, { useState, Suspense } from 'react';
+import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { GoogleLogin } from '@react-oauth/google';
+import { useAuth } from '../../hooks/useAuth';
+import { Loader2, Eye, EyeOff } from 'lucide-react';
+
+function LoginForm() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const { login, loginWithGoogle, loading, error } = useAuth();
+  
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+
+  const redirectPath = searchParams.get('redirect') || '/';
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setFormError(null);
+
+    if (!email || !password) {
+      setFormError('Please fill in all fields.');
+      return;
+    }
+
+    try {
+      await login({ email, password });
+      router.push(redirectPath);
+    } catch (err: any) {
+      // Error handled by hook and stored in state
+    }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse: any) => {
+    try {
+      if (credentialResponse.credential) {
+        await loginWithGoogle(credentialResponse.credential);
+        router.push(redirectPath);
+      }
+    } catch (err) {
+      // Error handled by hook
+    }
+  };
+
+  return (
+    <div className="flex-grow flex items-center justify-center bg-white px-6 py-12 md:py-20">
+      <div className="w-full max-w-[900px] grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        
+        {/* Left Side: Illustration (hidden on small screens) */}
+        <div className="hidden md:flex justify-center items-center select-none">
+          <img 
+            src="/udemy_auth_illustration.png" 
+            alt="EduFlow authentication illustration" 
+            className="max-w-full max-h-[380px] object-contain"
+          />
+        </div>
+
+        {/* Right Side: Form */}
+        <div className="w-full max-w-[380px] mx-auto space-y-6">
+          <div>
+            <h2 className="text-base font-bold text-brand-charcoal mb-2">
+              Log in to continue your learning journey
+            </h2>
+          </div>
+
+          {/* Display Error Message */}
+          {(error || formError) && (
+            <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-sm font-medium">
+              {formError || error}
+            </div>
+          )}
+
+          {/* Login Form */}
+          <form onSubmit={handleSubmit} className="space-y-4" autoComplete="off">
+            <div>
+              <input
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full h-[48px] px-4 border border-brand-charcoal focus:border-brand-purple text-sm focus:outline-none transition-colors text-brand-charcoal font-medium placeholder-gray-500"
+                required
+                autoComplete="no-autofill"
+              />
+            </div>
+
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full h-[48px] pl-4 pr-12 border border-brand-charcoal focus:border-brand-purple text-sm focus:outline-none transition-colors text-brand-charcoal font-medium placeholder-gray-500"
+                required
+                autoComplete="new-password"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-[14px] text-gray-500 hover:text-brand-charcoal transition-colors border-none bg-transparent cursor-pointer p-0"
+              >
+                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              </button>
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full h-[48px] bg-brand-purple hover:bg-brand-purple-hover text-white font-bold text-sm transition-colors flex items-center justify-center cursor-pointer disabled:bg-purple-300"
+            >
+              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Continue'}
+            </button>
+          </form>
+
+          {/* Divider */}
+          <div className="relative flex py-2 items-center">
+            <div className="flex-grow border-t border-brand-grey"></div>
+            <span className="flex-shrink mx-4 text-gray-500 text-xs font-bold uppercase select-none">Other log in options</span>
+            <div className="flex-grow border-t border-brand-grey"></div>
+          </div>
+
+          {/* Google Authentication */}
+          <div className="flex justify-center">
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={() => setFormError('Google Sign-in failed. Please try again.')}
+              useOneTap
+              shape="square"
+              text="signin_with"
+            />
+          </div>
+
+          {/* Navigation Footer */}
+          <div className="pt-4 border-t border-brand-grey text-center text-xs text-gray-600">
+            Don't have an account?{' '}
+            <Link href="/register" className="font-bold text-brand-purple hover:underline transition-colors">
+              Sign up
+            </Link>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex-grow flex items-center justify-center bg-brand-bg px-4 py-12">
+        <Loader2 className="w-8 h-8 text-brand-purple animate-spin" />
+      </div>
+    }>
+      <LoginForm />
+    </Suspense>
+  );
+}
+
