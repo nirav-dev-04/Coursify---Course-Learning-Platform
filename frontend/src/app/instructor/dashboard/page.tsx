@@ -347,7 +347,7 @@ export default function InstructorDashboard() {
                   // Active Inventory List
                   <div className="space-y-8">
                     {/* Performance widgets grid */}
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                       {[
                         { label: 'Total Courses', value: courses.length, icon: <BookOpen className="w-4 h-4 text-brand-purple" /> },
                         { label: 'Published Courses', value: published, icon: <BookMarked className="w-4 h-4 text-emerald-600" /> },
@@ -380,7 +380,9 @@ export default function InstructorDashboard() {
                           const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
                           return (
                             <div key={idx} className="flex-1 flex flex-col items-center gap-2">
-                              <div className="text-[10px] font-bold text-brand-purple shrink-0">₹{val.toLocaleString()}</div>
+                              <div className="text-[9px] md:text-[10px] font-bold text-brand-purple shrink-0">
+                                ₹{val >= 1000 ? `${Math.round(val / 1000)}k` : val}
+                              </div>
                               <div className={`w-full ${heights[idx]} bg-brand-purple/20 hover:bg-brand-purple rounded-t transition-colors relative group`}>
                                 <div className="absolute inset-0 bg-brand-purple rounded-t scale-y-0 origin-bottom group-hover:scale-y-100 transition-transform duration-200" />
                               </div>

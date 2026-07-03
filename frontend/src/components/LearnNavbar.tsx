@@ -71,7 +71,7 @@ export default function LearnNavbar({ courseId, courseTitle, progressPercent }: 
       
       {/* 1. Back Arrow and Title */}
       <div className="flex items-center gap-3 min-w-0">
-        <Link href="/my-courses" className="p-2 hover:bg-brand-charcoal-hover rounded-full transition-colors flex items-center justify-center shrink-0">
+        <Link href="/my-courses" className="w-[44px] h-[44px] hover:bg-brand-charcoal-hover rounded-full transition-colors flex items-center justify-center shrink-0">
           <ArrowLeft className="w-5 h-5" />
         </Link>
         <span className="h-6 w-[1px] bg-brand-charcoal-hover shrink-0" />

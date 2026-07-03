@@ -2,6 +2,7 @@
 
 import React, { useState, Suspense } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { GoogleLogin } from '@react-oauth/google';
 import { useAuth } from '../../hooks/useAuth';
@@ -53,10 +54,13 @@ function LoginForm() {
         
         {/* Left Side: Illustration (hidden on small screens) */}
         <div className="hidden md:flex justify-center items-center select-none">
-          <img 
+          <Image 
             src="/udemy_auth_illustration.png" 
-            alt="EduFlow authentication illustration" 
-            className="max-w-full max-h-[380px] object-contain"
+            alt="Coursify authentication illustration" 
+            width={380}
+            height={380}
+            priority
+            className="max-w-full h-auto object-contain"
           />
         </div>
 

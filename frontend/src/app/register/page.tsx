@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { GoogleLogin } from '@react-oauth/google';
 import { useAuth } from '../../hooks/useAuth';
@@ -57,10 +58,13 @@ export default function RegisterPage() {
         
         {/* Left Side: Illustration (hidden on small screens) */}
         <div className="hidden md:flex justify-center items-center select-none">
-          <img 
+          <Image 
             src="/udemy_auth_illustration.png" 
-            alt="EduFlow authentication illustration" 
-            className="max-w-full max-h-[380px] object-contain"
+            alt="Coursify authentication illustration" 
+            width={380}
+            height={380}
+            priority
+            className="max-w-full h-auto object-contain"
           />
         </div>
 

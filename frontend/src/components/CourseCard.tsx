@@ -84,7 +84,6 @@ export default function CourseCard({ course }: CourseCardProps) {
   const { user } = useAuth();
   const { items, addToCart } = useCartStore();
 
-  const [showPopover, setShowPopover] = useState(false);
   const [popoverPosition, setPopoverPosition] = useState<'left' | 'right'>('right');
   const [addingToCartState, setAddingToCartState] = useState(false);
   const [isHoverDevice, setIsHoverDevice] = useState(false);
@@ -93,23 +92,13 @@ export default function CourseCard({ course }: CourseCardProps) {
   const isWishlisted = isInWishlist(course.id);
 
   const cardRef = useRef<HTMLDivElement>(null);
-  const enterTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const leaveTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     setIsHoverDevice(window.matchMedia('(hover: hover)').matches);
-    return () => {
-      if (enterTimerRef.current) clearTimeout(enterTimerRef.current);
-      if (leaveTimerRef.current) clearTimeout(leaveTimerRef.current);
-    };
   }, []);
 
   const handleMouseEnter = () => {
     if (!isHoverDevice) return;
-    if (leaveTimerRef.current) {
-      clearTimeout(leaveTimerRef.current);
-      leaveTimerRef.current = null;
-    }
 
     if (cardRef.current) {
       const rect = cardRef.current.getBoundingClientRect();
@@ -121,39 +110,18 @@ export default function CourseCard({ course }: CourseCardProps) {
         setPopoverPosition('right');
       }
     }
-
-    if (!showPopover && !enterTimerRef.current) {
-      enterTimerRef.current = setTimeout(() => {
-        setShowPopover(true);
-        enterTimerRef.current = null;
-      }, 400);
-    }
   };
 
   const handleMouseLeave = () => {
-    if (!isHoverDevice) return;
-    if (enterTimerRef.current) {
-      clearTimeout(enterTimerRef.current);
-      enterTimerRef.current = null;
-    }
-
-    if (!leaveTimerRef.current) {
-      leaveTimerRef.current = setTimeout(() => {
-        setShowPopover(false);
-        leaveTimerRef.current = null;
-      }, 200);
-    }
+    // No-op - visibility handled by CSS
   };
 
   const handleMouseEnterPopover = () => {
-    if (leaveTimerRef.current) {
-      clearTimeout(leaveTimerRef.current);
-      leaveTimerRef.current = null;
-    }
+    // No-op - visibility handled by CSS
   };
 
   const handleMouseLeavePopover = () => {
-    handleMouseLeave();
+    // No-op - visibility handled by CSS
   };
 
   const handleAddToCart = async (e: React.MouseEvent) => {
@@ -304,89 +272,87 @@ export default function CourseCard({ course }: CourseCardProps) {
       </Link>
 
       {/* Hover Popover Details Card */}
-      {showPopover && (
+      <div 
+        onMouseEnter={handleMouseEnterPopover}
+        onMouseLeave={handleMouseLeavePopover}
+        className={`hidden lg:block absolute top-[-20px] ${
+          popoverPosition === 'right' 
+            ? 'left-full ml-4' 
+            : 'right-full mr-4'
+        } w-[340px] bg-white border border-brand-grey shadow-2xl p-5 text-brand-charcoal text-left z-50 rounded select-none cursor-default opacity-0 pointer-events-none translate-y-2 group-hover/card:opacity-100 group-hover/card:pointer-events-auto group-hover/card:translate-y-0 transition-all duration-200 delay-300`}
+      >
+        {/* Transparent bridge to prevent hover loss */}
         <div 
-          onMouseEnter={handleMouseEnterPopover}
-          onMouseLeave={handleMouseLeavePopover}
-          className={`absolute top-[-20px] ${
+          className={`absolute top-0 bottom-0 ${
             popoverPosition === 'right' 
-              ? 'left-full ml-4' 
-              : 'right-full mr-4'
-          } w-[340px] bg-white border border-brand-grey shadow-2xl p-5 text-brand-charcoal text-left z-50 rounded select-none cursor-default`}
-        >
-          {/* Transparent bridge to prevent hover loss */}
-          <div 
-            className={`absolute top-0 bottom-0 ${
-              popoverPosition === 'right' 
-                ? '-left-4 w-4' 
-                : '-right-4 w-4'
-            } bg-transparent`} 
-          />
-          
-          <h4 className="font-bold text-base text-brand-charcoal line-clamp-2 leading-snug mb-1">
-            {course.title}
-          </h4>
-          
-          <div className="flex items-center gap-2 text-[10px] text-gray-500 mb-2 font-medium">
-            <span className="bg-purple-100 text-brand-purple font-extrabold text-[9px] px-1.5 py-0.5 rounded uppercase">
-              Premium
+              ? '-left-4 w-4' 
+              : '-right-4 w-4'
+          } bg-transparent`} 
+        />
+        
+        <h4 className="font-bold text-base text-brand-charcoal line-clamp-2 leading-snug mb-1">
+          {course.title}
+        </h4>
+        
+        <div className="flex items-center gap-2 text-[10px] text-gray-500 mb-2 font-medium">
+          <span className="bg-purple-100 text-brand-purple font-extrabold text-[9px] px-1.5 py-0.5 rounded uppercase">
+            Premium
+          </span>
+          {course.id % 3 === 0 && (
+            <span className="bg-emerald-50 text-emerald-700 font-extrabold text-[9px] px-1.5 py-0.5 rounded uppercase">
+              Bestseller
             </span>
-            {course.id % 3 === 0 && (
-              <span className="bg-emerald-50 text-emerald-700 font-extrabold text-[9px] px-1.5 py-0.5 rounded uppercase">
-                Bestseller
-              </span>
-            )}
-            <span className="text-gray-400">Updated June 2026</span>
-          </div>
-
-          <p className="text-[11px] text-gray-400 font-semibold mb-2">
-            {simHours} total hours • {level} • Subtitles
-          </p>
-
-          <p className="text-xs text-gray-600 mb-3.5 leading-relaxed font-medium">
-            {getCourseHeadline(course.category, course.title)}
-          </p>
-
-          <div className="space-y-2 mb-4">
-            {getCourseObjectives(course.category, course.title).map((obj, index) => (
-              <div key={index} className="flex items-start gap-2 text-xs text-gray-600 leading-tight">
-                <Check className="w-3.5 h-3.5 text-brand-charcoal shrink-0 mt-0.5" />
-                <span>{obj}</span>
-              </div>
-            ))}
-          </div>
-
-          {/* Action Row */}
-          <div className="flex items-center gap-2 pt-3 border-t border-brand-grey shrink-0">
-            {isInCart ? (
-              <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  router.push('/cart');
-                }}
-                className="flex-grow h-[40px] bg-brand-purple hover:bg-brand-purple-hover text-white font-extrabold text-xs flex items-center justify-center transition-colors cursor-pointer border-none rounded-[4px]"
-              >
-                Go to Cart
-              </button>
-            ) : (
-              <button
-                onClick={handleAddToCart}
-                disabled={addingToCartState}
-                className="flex-grow h-[40px] bg-brand-purple hover:bg-brand-purple-hover text-white font-extrabold text-xs flex items-center justify-center transition-colors cursor-pointer border-none rounded-[4px] disabled:bg-purple-300"
-              >
-                {addingToCartState ? <Loader2 className="w-4 h-4 animate-spin text-white" /> : 'Add to Cart'}
-              </button>
-            )}
-            <button
-              onClick={handleWishlistToggle}
-              className={`w-[40px] h-[40px] border border-brand-charcoal rounded-full flex items-center justify-center transition-colors cursor-pointer hover:bg-brand-bg shrink-0 bg-transparent ${isWishlisted ? 'border-red-500 hover:bg-red-50' : ''}`}
-            >
-              <Heart className={`w-4 h-4 ${isWishlisted ? 'fill-red-500 text-red-500' : 'text-brand-charcoal'}`} />
-            </button>
-          </div>
+          )}
+          <span className="text-gray-400">Updated June 2026</span>
         </div>
-      )}
+
+        <p className="text-[11px] text-gray-400 font-semibold mb-2">
+          {simHours} total hours • {level} • Subtitles
+        </p>
+
+        <p className="text-xs text-gray-600 mb-3.5 leading-relaxed font-medium">
+          {getCourseHeadline(course.category, course.title)}
+        </p>
+
+        <div className="space-y-2 mb-4">
+          {getCourseObjectives(course.category, course.title).map((obj, index) => (
+            <div key={index} className="flex items-start gap-2 text-xs text-gray-600 leading-tight">
+              <Check className="w-3.5 h-3.5 text-brand-charcoal shrink-0 mt-0.5" />
+              <span>{obj}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Action Row */}
+        <div className="flex items-center gap-2 pt-3 border-t border-brand-grey shrink-0">
+          {isInCart ? (
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                router.push('/cart');
+              }}
+              className="flex-grow h-[40px] bg-brand-purple hover:bg-brand-purple-hover text-white font-extrabold text-xs flex items-center justify-center transition-colors cursor-pointer border-none rounded-[4px]"
+            >
+              Go to Cart
+            </button>
+          ) : (
+            <button
+              onClick={handleAddToCart}
+              disabled={addingToCartState}
+              className="flex-grow h-[40px] bg-brand-purple hover:bg-brand-purple-hover text-white font-extrabold text-xs flex items-center justify-center transition-colors cursor-pointer border-none rounded-[4px] disabled:bg-purple-300"
+            >
+              {addingToCartState ? <Loader2 className="w-4 h-4 animate-spin text-white" /> : 'Add to Cart'}
+            </button>
+          )}
+          <button
+            onClick={handleWishlistToggle}
+            className={`w-[40px] h-[40px] border border-brand-charcoal rounded-full flex items-center justify-center transition-colors cursor-pointer hover:bg-brand-bg shrink-0 bg-transparent ${isWishlisted ? 'border-red-500 hover:bg-red-50' : ''}`}
+          >
+            <Heart className={`w-4 h-4 ${isWishlisted ? 'fill-red-500 text-red-500' : 'text-brand-charcoal'}`} />
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

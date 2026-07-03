@@ -7,8 +7,13 @@ import { LanguageProvider } from '../context/LanguageContext';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'EduFlow | Premium E-Learning Course Marketplace',
+  title: 'Coursify | Premium E-Learning Course Marketplace',
   description: 'Master in-demand skills in AI, Software Engineering, and Trading with high-fidelity, adaptive streaming courses.',
+};
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
 };
 
 export default function RootLayout({

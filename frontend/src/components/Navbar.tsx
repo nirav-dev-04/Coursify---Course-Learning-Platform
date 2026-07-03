@@ -15,16 +15,6 @@ export default function Navbar() {
   const pathname = usePathname();
   const { user, logout, checkSession } = useAuth();
 
-  // Sync search input value with page navigation
-  useEffect(() => {
-    if (pathname === '/courses') {
-      setSearchTerm(searchParams.get('q') || '');
-    } else if (pathname.startsWith('/courses/')) {
-      // Keep current search term (e.g. clicked suggestion title) on course detail pages
-    } else {
-      setSearchTerm('');
-    }
-  }, [pathname, searchParams]);
   const { items, fetchCart } = useCartStore();
   const { language, setLanguage, t } = useLanguage();
   const [showLangSubmenu, setShowLangSubmenu] = useState(false);
@@ -35,6 +25,35 @@ export default function Navbar() {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [showMobileSearch, setShowMobileSearch] = useState(false);
+
+  // Sync search input value with page navigation
+  useEffect(() => {
+    if (pathname === '/courses') {
+      setSearchTerm(searchParams.get('q') || '');
+    } else if (pathname.startsWith('/courses/')) {
+      // Keep current search term (e.g. clicked suggestion title) on course detail pages
+    } else {
+      setSearchTerm('');
+    }
+  }, [pathname, searchParams]);
+
+  // Auto-close drawers on route transition
+  useEffect(() => {
+    setIsDrawerOpen(false);
+    setShowMobileSearch(false);
+  }, [pathname]);
+
+  // Lock body scroll when drawer is open
+  useEffect(() => {
+    if (isDrawerOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isDrawerOpen]);
 
   // Dynamically extract related search keywords and phrases (Google style suggestions)
   const dynamicKeywords = React.useMemo(() => {
@@ -364,22 +383,22 @@ export default function Navbar() {
         </div>
 
         {/* 4. Actions (Cart & Auth) */}
-        <div className="flex items-center gap-4 shrink-0">
+        <div className="flex items-center gap-2 md:gap-4 shrink-0">
           
           {/* Mobile Search Button */}
           <button
             onClick={() => setShowMobileSearch(true)}
-            className="p-2 hover:bg-brand-bg rounded-full text-brand-charcoal hover:text-brand-purple transition-colors md:hidden border-none bg-transparent cursor-pointer"
+            className="w-[44px] h-[44px] flex items-center justify-center hover:bg-brand-bg rounded-full text-brand-charcoal hover:text-brand-purple transition-colors md:hidden border-none bg-transparent cursor-pointer"
             aria-label="Search"
           >
             <Search className="w-[20px] h-[20px]" />
           </button>
 
           {/* Cart Trigger */}
-          <Link href="/cart" className="relative p-2 hover:bg-brand-bg rounded-full text-brand-charcoal hover:text-brand-purple transition-colors">
+          <Link href="/cart" className="relative w-[44px] h-[44px] flex items-center justify-center hover:bg-brand-bg rounded-full text-brand-charcoal hover:text-brand-purple transition-colors">
             <ShoppingCart className="w-[20px] h-[20px]" />
             {items.length > 0 && (
-              <span className="absolute top-0 right-0 bg-brand-purple text-white text-[9px] font-bold w-[16px] h-[16px] rounded-full flex items-center justify-center border border-brand-white animate-pulse">
+              <span className="absolute top-1 right-1 bg-brand-purple text-white text-[9px] font-bold w-[16px] h-[16px] rounded-full flex items-center justify-center border border-brand-white animate-pulse">
                 {items.length}
               </span>
             )}
@@ -404,7 +423,7 @@ export default function Navbar() {
               <div className="relative group py-2">
                 <Link 
                   href="/user/settings"
-                  className="w-8 h-8 rounded-full bg-brand-charcoal text-white flex items-center justify-center font-bold text-sm hover:bg-brand-charcoal-hover transition-colors select-none focus:outline-none cursor-pointer overflow-hidden border border-brand-grey shadow-sm"
+                  className="w-[44px] h-[44px] md:w-8 md:h-8 rounded-full bg-brand-charcoal text-white flex items-center justify-center font-bold text-sm hover:bg-brand-charcoal-hover transition-colors select-none focus:outline-none cursor-pointer overflow-hidden border border-brand-grey shadow-sm"
                 >
                   {user.avatarUrl ? (
                     <img src={user.avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
@@ -581,11 +600,12 @@ export default function Navbar() {
             {/* Header */}
             <div className="p-4 border-b border-brand-grey flex items-center justify-between">
               <span className="font-extrabold text-lg text-brand-charcoal">
-                Edu<span className="text-brand-purple">Flow</span>
+                Cours<span className="text-brand-purple">ify</span>
               </span>
               <button
                 onClick={() => setIsDrawerOpen(false)}
-                className="p-1.5 hover:bg-brand-bg rounded-full text-brand-charcoal border-none bg-transparent cursor-pointer"
+                className="w-[44px] h-[44px] flex items-center justify-center hover:bg-brand-bg rounded-full text-brand-charcoal border-none bg-transparent cursor-pointer"
+                aria-label="Close Menu"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -783,7 +803,8 @@ export default function Navbar() {
                 setShowMobileSearch(false);
                 setSearchTerm('');
               }}
-              className="p-2 hover:bg-brand-bg rounded-full text-brand-charcoal border-none bg-transparent cursor-pointer"
+              className="w-[44px] h-[44px] flex items-center justify-center hover:bg-brand-bg rounded-full text-brand-charcoal border-none bg-transparent cursor-pointer"
+              aria-label="Close Search"
             >
               <X className="w-[24px] h-[24px]" />
             </button>

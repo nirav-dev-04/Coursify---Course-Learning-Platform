@@ -751,8 +751,8 @@ export default function LearnPage() {
             )}
           </div>
 
-          {/* Practice Test Sidebar (Desktop only) */}
-          <aside className="w-full lg:w-[320px] bg-brand-charcoal border-t lg:border-t-0 lg:border-l border-brand-charcoal-hover shrink-0 flex-col hidden lg:flex">
+          {/* Practice Test Sidebar */}
+          <aside className="w-full lg:w-[320px] bg-[#1c1d23] lg:bg-brand-charcoal border border-brand-charcoal-hover lg:border-none lg:border-l shrink-0 flex flex-col rounded-lg lg:rounded-none mt-6 lg:mt-0">
             <div className="px-5 py-4 border-b border-brand-charcoal-hover font-bold text-sm select-none">
               <span>Exam Navigation</span>
             </div>

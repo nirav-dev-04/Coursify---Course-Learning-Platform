@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../lib/api';
 import { CourseListDTO } from '../lib/types';
@@ -220,9 +221,9 @@ export default function HomePage() {
 
           {/* Course Grid */}
           {loading ? (
-            <div className="flex overflow-x-auto pb-4 gap-6 scrollbar-thin md:grid md:grid-cols-2 lg:grid-cols-4 md:overflow-x-visible md:pb-0">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full">
               {[...Array(4)].map((_, i) => (
-                <div key={i} className="w-[280px] shrink-0 md:w-auto md:shrink h-[300px] border border-brand-grey bg-brand-white flex flex-col animate-pulse rounded-[20px] p-3 shadow-sm">
+                <div key={i} className="w-full h-[300px] border border-brand-grey bg-brand-white flex flex-col animate-pulse rounded-[20px] p-3 shadow-sm">
                   <div className="bg-gray-200 aspect-[16/10] w-full rounded-[14px] mb-3" />
                   <div className="p-1 flex-grow flex flex-col justify-between space-y-2">
                     <div className="space-y-2">
@@ -236,11 +237,9 @@ export default function HomePage() {
               ))}
             </div>
           ) : (
-            <div className="flex overflow-x-auto pb-4 gap-6 scrollbar-thin md:grid md:grid-cols-2 lg:grid-cols-4 md:overflow-x-visible md:pb-0">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full">
               {list?.map((course) => (
-                <div key={course.id} className="w-[280px] shrink-0 md:w-auto md:shrink">
-                  <CourseCard course={course} />
-                </div>
+                <CourseCard key={course.id} course={course} />
               ))}
             </div>
           )}
@@ -260,10 +259,13 @@ export default function HomePage() {
           
           {/* Slide image — always full width, correct height */}
           <div className="absolute inset-0 w-full h-full">
-            <img 
+            <Image 
               src={slides[currentSlide].image} 
               alt="Udemy slide cover" 
-              className={`w-full h-full object-cover ${slides[currentSlide].objectPosition || 'object-center'}`}
+              fill
+              priority
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 1200px"
+              className={`object-cover ${slides[currentSlide].objectPosition || 'object-center'}`}
             />
             {/* White to transparent gradient overlay on the left for text card readability */}
             <div className="absolute inset-0 bg-gradient-to-r from-white via-white/80 to-transparent hidden md:block z-10 w-1/2" />
@@ -540,7 +542,7 @@ export default function HomePage() {
       <section className="py-12 bg-white border-t border-brand-grey overflow-hidden select-none">
         <div className="max-w-6xl mx-auto w-full text-center px-6 mb-8">
           <p className="text-gray-500 font-bold text-sm">
-            EduFlow is trusted by over 17,000 companies and millions of learners around the world
+            Coursify is trusted by over 17,000 companies and millions of learners around the world
           </p>
         </div>
 
