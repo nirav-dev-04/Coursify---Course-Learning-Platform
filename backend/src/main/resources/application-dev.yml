@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/eduflow_dev
-    username: postgres
-    password: ldrp@123
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/eduflow_dev}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:ldrp@123}
     driver-class-name: org.postgresql.Driver
   jpa:
     show-sql: false
@@ -13,8 +13,8 @@ spring:
         format_sql: false
   data:
     redis:
-      host: localhost
-      port: 6379
+      host: ${SPRING_DATA_REDIS_HOST:localhost}
+      port: ${SPRING_DATA_REDIS_PORT:6379}
 
 jwt:
   secret: dev-secret-key-min-256-bits-long-dev-secret-key-min-256-bits-long
