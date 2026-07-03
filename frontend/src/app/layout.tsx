@@ -21,7 +21,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '1088469592471-mockclientid.apps.googleusercontent.com';
+  const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '210531315579-a62lqrmgs0a6ef90jctcblu3ri9iqh4s.apps.googleusercontent.com';
 
   return (
     <html lang="en" className="min-h-screen">
