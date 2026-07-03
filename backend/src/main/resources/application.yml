@@ -9,7 +9,7 @@ spring:
     locations: classpath:db/migration
 
 cors:
-  allowed-origins: http://localhost:3000
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000}
 
 razorpay:
   key-id: ${RAZORPAY_KEY_ID:test_key_id}
