@@ -407,15 +407,15 @@ export default function Navbar() {
           {user ? (
             // Authenticated User Menu
             <div className="flex items-center gap-4">
-              <Link href="/my-courses" className="text-sm font-medium text-brand-charcoal hover:text-brand-purple transition-colors hidden sm:block">
+              <Link href="/my-courses" className="text-sm font-medium text-brand-charcoal hover:text-brand-purple transition-colors hidden lg:block">
                 {t('navbar.learning')}
               </Link>
               
-              <Link href="/wishlist" className="text-sm font-medium text-brand-charcoal hover:text-brand-purple transition-colors hidden sm:block">
+              <Link href="/wishlist" className="text-sm font-medium text-brand-charcoal hover:text-brand-purple transition-colors hidden lg:block">
                 Wishlist
               </Link>
               
-              <Link href="/instructor" className="text-sm font-medium text-brand-charcoal hover:text-brand-purple transition-colors hidden sm:block">
+              <Link href="/instructor" className="text-sm font-medium text-brand-charcoal hover:text-brand-purple transition-colors hidden lg:block">
                 {user.role === 'INSTRUCTOR' || user.role === 'ADMIN' ? 'Instructor dashboard' : 'Teach on Coursify'}
               </Link>
 
@@ -574,7 +574,7 @@ export default function Navbar() {
             </div>
           ) : (
             // Unauthenticated Actions
-            <div className="flex items-center gap-2">
+            <div className="hidden md:flex items-center gap-2">
               <Link href="/login" className="h-[36px] px-3.5 border border-brand-charcoal text-brand-charcoal text-xs font-bold flex items-center justify-center hover:bg-brand-bg transition-colors cursor-pointer rounded-[4px] bg-transparent">
                 {t('navbar.login')}
               </Link>
