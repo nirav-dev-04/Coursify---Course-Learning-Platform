@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { GoogleLogin } from '@react-oauth/google';
 import { useAuth } from '../../hooks/useAuth';
+import { useCartStore } from '../../store/useCartStore';
 import { Loader2, Eye, EyeOff } from 'lucide-react';
 
 function LoginForm() {
@@ -31,6 +32,22 @@ function LoginForm() {
 
     try {
       await login({ email, password });
+      
+      // Check if there is a pending add to cart item
+      const pendingItemStr = localStorage.getItem('pending_add_to_cart');
+      if (pendingItemStr) {
+        try {
+          const pendingItem = JSON.parse(pendingItemStr);
+          const { addToCart } = useCartStore.getState();
+          await addToCart(pendingItem.id, pendingItem.data);
+          localStorage.removeItem('pending_add_to_cart');
+          router.push('/cart');
+          return;
+        } catch (e) {
+          console.error('Failed to add pending item to cart', e);
+        }
+      }
+      
       router.push(redirectPath);
     } catch (err: any) {
       // Error handled by hook and stored in state
@@ -41,6 +58,22 @@ function LoginForm() {
     try {
       if (credentialResponse.credential) {
         await loginWithGoogle(credentialResponse.credential);
+        
+        // Check if there is a pending add to cart item
+        const pendingItemStr = localStorage.getItem('pending_add_to_cart');
+        if (pendingItemStr) {
+          try {
+            const pendingItem = JSON.parse(pendingItemStr);
+            const { addToCart } = useCartStore.getState();
+            await addToCart(pendingItem.id, pendingItem.data);
+            localStorage.removeItem('pending_add_to_cart');
+            router.push('/cart');
+            return;
+          } catch (e) {
+            console.error('Failed to add pending item to cart', e);
+          }
+        }
+        
         router.push(redirectPath);
       }
     } catch (err) {
@@ -142,7 +175,7 @@ function LoginForm() {
           {/* Navigation Footer */}
           <div className="pt-4 border-t border-brand-grey text-center text-xs text-gray-600">
             Don't have an account?{' '}
-            <Link href="/register" className="font-bold text-brand-purple hover:underline transition-colors">
+            <Link href={`/register${redirectPath !== '/' ? `?redirect=${encodeURIComponent(redirectPath)}` : ''}`} className="font-bold text-brand-purple hover:underline transition-colors">
               Sign up
             </Link>
           </div>

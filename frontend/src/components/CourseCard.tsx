@@ -128,6 +128,12 @@ export default function CourseCard({ course }: CourseCardProps) {
     e.preventDefault();
     e.stopPropagation();
     if (!user) {
+      // Save pending cart item so login page can auto-add it after authentication
+      const pendingData = {
+        id: course.id,
+        data: { ...course, instructor: { name: course.instructorName } }
+      };
+      localStorage.setItem('pending_add_to_cart', JSON.stringify(pendingData));
       router.push(`/login?redirect=/courses/${course.slug}`);
       return;
     }

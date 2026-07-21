@@ -1,16 +1,18 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { GoogleLogin } from '@react-oauth/google';
 import { useAuth } from '../../hooks/useAuth';
+import { useCartStore } from '../../store/useCartStore';
 import { Loader2, Eye, EyeOff } from 'lucide-react';
 
-export default function RegisterPage() {
+function RegisterForm() {
   const router = useRouter();
-  const { register, loginWithGoogle, loading, error } = useAuth();
+  const searchParams = useSearchParams();
+  const { register, login, loginWithGoogle, loading, error } = useAuth();
   
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -19,6 +21,8 @@ export default function RegisterPage() {
   const [role, setRole] = useState('STUDENT');
   const [formError, setFormError] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
+
+  const redirectPath = searchParams.get('redirect') || '/';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,10 +36,27 @@ export default function RegisterPage() {
 
     try {
       await register({ name, email, password, role });
-      setSuccessMsg('Registration successful! Redirecting to login page...');
-      setTimeout(() => {
-        router.push('/login');
-      }, 1500);
+      setSuccessMsg('Registration successful! Logging you in...');
+      
+      // Auto-login the user immediately!
+      await login({ email, password });
+
+      // Check if there is a pending add to cart item
+      const pendingItemStr = localStorage.getItem('pending_add_to_cart');
+      if (pendingItemStr) {
+        try {
+          const pendingItem = JSON.parse(pendingItemStr);
+          const { addToCart } = useCartStore.getState();
+          await addToCart(pendingItem.id, pendingItem.data);
+          localStorage.removeItem('pending_add_to_cart');
+          router.push('/cart');
+          return;
+        } catch (e) {
+          console.error('Failed to add pending item to cart', e);
+        }
+      }
+      
+      router.push(redirectPath);
     } catch (err: any) {
       // Handled by hook
     }
@@ -45,7 +66,23 @@ export default function RegisterPage() {
     try {
       if (credentialResponse.credential) {
         await loginWithGoogle(credentialResponse.credential);
-        router.push('/');
+
+        // Check if there is a pending add to cart item
+        const pendingItemStr = localStorage.getItem('pending_add_to_cart');
+        if (pendingItemStr) {
+          try {
+            const pendingItem = JSON.parse(pendingItemStr);
+            const { addToCart } = useCartStore.getState();
+            await addToCart(pendingItem.id, pendingItem.data);
+            localStorage.removeItem('pending_add_to_cart');
+            router.push('/cart');
+            return;
+          } catch (e) {
+            console.error('Failed to add pending item to cart', e);
+          }
+        }
+        
+        router.push(redirectPath);
       }
     } catch (err) {
       // Handled by hook
@@ -189,12 +226,24 @@ export default function RegisterPage() {
           {/* Navigation Footer */}
           <div className="pt-4 border-t border-brand-grey text-center text-xs text-gray-600">
             Already have an account?{' '}
-            <Link href="/login" className="font-bold text-brand-purple hover:underline transition-colors">
+            <Link href={`/login${redirectPath !== '/' ? `?redirect=${encodeURIComponent(redirectPath)}` : ''}`} className="font-bold text-brand-purple hover:underline transition-colors">
               Log in
             </Link>
           </div>
         </div>
       </div>
     </div>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex-grow flex items-center justify-center bg-brand-bg px-4 py-12">
+        <Loader2 className="w-8 h-8 text-brand-purple animate-spin" />
+      </div>
+    }>
+      <RegisterForm />
+    </Suspense>
   );
 }

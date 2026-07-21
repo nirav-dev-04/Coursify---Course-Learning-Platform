@@ -289,6 +289,11 @@ export default function CourseDetailPage() {
 
   const handleAddToCart = async () => {
     if (!user) {
+      // Save pending cart item so login page can auto-add it after authentication
+      if (course) {
+        const pendingData = { id: course.id, data: course };
+        localStorage.setItem('pending_add_to_cart', JSON.stringify(pendingData));
+      }
       router.push(`/login?redirect=/courses/${slug}`);
       return;
     }
@@ -299,6 +304,11 @@ export default function CourseDetailPage() {
 
   const handleCheckout = () => {
     if (!user) {
+      // Save pending cart item so login page can auto-add it after authentication
+      if (course) {
+        const pendingData = { id: course.id, data: course };
+        localStorage.setItem('pending_add_to_cart', JSON.stringify(pendingData));
+      }
       router.push(`/login?redirect=/courses/${slug}`);
       return;
     }
